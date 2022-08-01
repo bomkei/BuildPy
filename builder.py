@@ -187,7 +187,7 @@ class Builder:
     if self.context.no_overwrite == BuilderContext.OverwriteProtector.FolderCopy:
       return self.context.object_outdir + file[file.find('/') : file.rfind('.')] + '.o'
     else:
-      return self.context.object_outdir + file[file.find('/') + 1:].replace('/', '@')
+      return self.context.object_outdir + '/' + file[file.find('/') + 1: file.rfind('.')].replace('/', '@') + '.o'
 
   def compile(self, file):
     lang = self.detect_lang(file)
@@ -258,7 +258,9 @@ class Builder:
       os.system(f'rm -rf {self.context.object_outdir}')
       return 0
 
-    # == create subdirs in objects folder ==
+    # == create objects folder ==
+    os.system(f'mkdir -p {self.context.object_outdir}')
+
     for sub in self.context.object_subdir:
       os.system(f'mkdir -p {self.context.object_outdir}/{sub}')
 
