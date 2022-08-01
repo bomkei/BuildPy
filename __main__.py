@@ -17,7 +17,7 @@ def main():
   except:
     print('unhandled exception have been occurred')
 
-  return 1
+  os._exit(1)
 
 # ------
 
