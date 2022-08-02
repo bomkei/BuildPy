@@ -31,8 +31,8 @@ build {
   }
 
   extensions {
-    c { c }
-    cpp { cc cxx cpp }
+    c   = c
+    cpp = cc cxx cpp
   }
 
   flags {

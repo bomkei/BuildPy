@@ -10,6 +10,10 @@ from enum import Enum
 from fbp.parser import *
 from threading import Thread
 
+def cwd(s):
+  print(s)
+  return os.system(s)
+
 class BuilderContext:
   class OverwriteProtector(Enum):
     FolderCopy = 0
@@ -61,39 +65,50 @@ class Builder:
     self.updated = False
 
     self.f_clean = False
+    self.f_debug = False
+    self.f_re = False
 
   # ==== Parse arguments passed to application ====
   def parse_argv(self, argv) -> bool:
     i = 1
 
-#    try:
-    while i < len(argv):
-      arg = argv[i]
+    try:
+      while i < len(argv):
+        arg = argv[i]
 
-      if arg.startswith('-'):
-        arg = arg[1:]
+        if arg.startswith('-'):
+          arg = arg[1:]
 
-        if arg == 'fast':
-          self.context.fastmode = True
-          i += 1
-        elif arg == 'clean':
-          self.f_clean = True
+          if arg == 'fast':
+            self.context.fastmode = True
+            i += 1
+          elif arg == 'clean':
+            self.f_clean = True
+            i += 1
+          elif arg == 'debug':
+            self.f_debug = True
+            i += 1
+          elif arg == 're':
+            self.f_re = True
+            i += 1
+          elif arg == 'C':
+            os.chdir(argv[i + 1])
+            i += 2
+          else:
+            raise Builder.InvalidArgument()
+        elif self.context == 0:
+          self.target = arg
+          self.script_path = arg + '.buildpy'
+
+          with open(self.script_path, mode='r') as fs:
+            self.script = ''.join(fs.readlines())
+
           i += 1
         else:
+          print('script file already specified')
           raise Builder.InvalidArgument()
-      elif self.context == 0:
-        self.target = arg
-        self.script_path = arg + '.buildpy'
-
-        with open(self.script_path, mode='r') as fs:
-          self.script = ''.join(fs.readlines())
-
-        i += 1
-      else:
-        print('script file already specified')
-        raise Builder.InvalidArgument()
-    # except:
-    #   return False
+    except:
+      return False
 
     return True
   
@@ -149,9 +164,8 @@ class Builder:
       ret.use_glob = e.value == 'true'
 
     # ===== Extensions =====
-    for prop in self.get_elem('build.extensions').value:
-      for item in prop.value:
-        ret.extensions[prop.name].append(item.name)
+    for item in self.get_elem('build.extensions').value:
+      ret.extensions[item.name].extend(item.value)
 
     # ===== Flags =====
     for item in self.get_elem('build.flags').value:
@@ -239,7 +253,8 @@ class Builder:
     else:
       return 0
 
-    return subprocess.run(cmdline, shell=True, capture_output=True)
+    return os.system(cmdline)
+    #return subprocess.run(cmdline, shell=True, capture_output=True)
 
   def link(self):
     line = f'{self.context.compilers["cpp"]} ' \
@@ -254,9 +269,15 @@ class Builder:
     
     self.context.obj_files = [self.to_output_path(x) for x in self.context.src_files]
 
-    if self.f_clean:
-      os.system(f'rm -rf {self.context.object_outdir} {self.target}')
-      return 0
+    if self.f_clean or self.f_re:
+      cwd(f'rm -rf {self.context.object_outdir} {self.target}')
+
+      if self.f_clean:
+        print('cleaned.')
+        return 0
+
+    if self.f_debug:
+      pass
 
     # == create objects folder ==
     os.system(f'mkdir -p {self.context.object_outdir}')
