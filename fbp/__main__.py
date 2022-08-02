@@ -1,6 +1,6 @@
 import os
 import sys
-from builder import *
+from fbp.builder import *
 
 # ---------------------------
 #  BuildPy
