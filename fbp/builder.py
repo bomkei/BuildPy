@@ -289,11 +289,8 @@ class Builder:
     errlist = [ ]
 
     def comp(src):
-      res = self.compile(src)
-
-      if res != 0 and res.returncode != 0:
-        print('error!')
-        errlist.append(f'error of {src}:\n{res.stderr.decode()}\n')
+      if res := self.compile(src) != 0:
+        errlist.append(src)
 
     if self.context.fastmode:
       with ThreadPoolExecutor() as executor:
@@ -303,12 +300,6 @@ class Builder:
         comp(src)
 
     if errlist != [ ]:
-      print('\n')
-
-      for err in errlist:
-        print(err)
-
-      print('failed to build.')
       return 1
 
     # == Link ==

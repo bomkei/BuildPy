@@ -1,10 +1,8 @@
 #include <iostream>
 #include "A.h"
 
-int main(int argc, char** argv) {
-  auto&& vec = make_vec((char const**)argv, argc);
+int aaa(int,char**);
 
-  for( auto&& s : vec ) {
-    std::cout << s << std::endl;
-  }
+int main(int argc, char** argv) {
+  return aaa(argc,argv);
 }
