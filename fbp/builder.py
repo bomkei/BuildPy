@@ -7,7 +7,7 @@ import re
 import glob
 import subprocess
 from enum import Enum
-from parser import *
+from fbp.parser import *
 from threading import Thread
 
 class BuilderContext:
