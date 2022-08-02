@@ -255,7 +255,7 @@ class Builder:
     self.context.obj_files = [self.to_output_path(x) for x in self.context.src_files]
 
     if self.f_clean:
-      os.system(f'rm -rf {self.context.object_outdir}')
+      os.system(f'rm -rf {self.context.object_outdir} {self.target}')
       return 0
 
     # == create objects folder ==
