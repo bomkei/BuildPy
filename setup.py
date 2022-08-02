@@ -11,9 +11,9 @@ setup(
     version='1.2',
     description='Fast C/C++ Builder written in Python',
     license='MIT',
-    url='https://github.com/HIDE810/fbp',
-    author='Hidman',
-    author_email='hide810dev@gmail.com',
+    url='https://github.com/bomkei/BuildPy',
+    author='bomkei',
+    author_email='bunkeiprogrammer@gmail.com',
     long_description=read('README.md'),
     long_description_content_type='text/markdown',
     entry_points={ 'console_scripts': [ 'fbp=fbp.__main__:main' ] }
