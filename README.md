@@ -8,7 +8,7 @@ pip install fbp
 ```
 
 then create file with named <project-name>.buildpy in your C/C++ project <br>
-run command 'fbp <project-name>` when build
+run command `fbp <project-name>` when build
 
 # Example
 ```
