@@ -276,9 +276,6 @@ class Builder:
         print('cleaned.')
         return 0
 
-    if self.f_debug:
-      pass
-
     # == create objects folder ==
     os.system(f'mkdir -p {self.context.object_outdir}')
 
@@ -325,6 +322,17 @@ class Builder:
       prs = Parser(self.script)
 
       self.ndlist = prs.parse()
+
+      if self.f_debug:
+        def repl(nd, s1, s2):
+          if nd.kind == Node.Kind.Let:
+            nd.value = [s2 if s1 in x else x for x in nd.value]
+          elif nd.kind == Node.Kind.Properties:
+            nd.value = [repl(x, s1, s2) for x in nd.value]
+
+          return nd
+
+        self.ndlist = [repl(nd, '-O', '-O0 -g') for nd in self.ndlist]
 
       self.execute()
 

@@ -8,7 +8,7 @@ def read(fname):
 setup(
     name='fbp',
     packages=['fbp'],
-    version='1.3.2',
+    version='1.3.3',
     description='Fast C/C++ Builder written in Python',
     license='MIT',
     url='https://github.com/bomkei/BuildPy',
