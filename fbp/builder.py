@@ -254,7 +254,6 @@ class Builder:
       return 0
 
     return os.system(cmdline)
-    #return subprocess.run(cmdline, shell=True, capture_output=True)
 
   def link(self):
     line = f'{self.context.compilers["cpp"]} ' \
@@ -262,7 +261,7 @@ class Builder:
       f'{" ".join(self.get_elem("build.flags.link").value)} -pthread -o {self.target}'
 
     print('linking...')
-    return subprocess.run(line, shell=True, capture_output=True)
+    return os.system(line)
 
   def execute(self) -> int:
     self.context = self.init_context()
