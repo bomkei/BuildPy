@@ -10,8 +10,8 @@ build {
   .no_overwrite = copy_folder
 
   compiler {
-    c   = clang
-    cpp = clang++
+    c   = clangaaaa
+    cpp = clang++aaa
   }
 
   extensions {

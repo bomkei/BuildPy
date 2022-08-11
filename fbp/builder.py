@@ -63,6 +63,7 @@ class Builder:
     self.ndlist = [ ]
     self.argv = [ ]
     self.updated = False
+    self.errflag = False
 
     self.f_clean = False
     self.f_debug = False
@@ -92,7 +93,8 @@ class Builder:
             self.f_re = True
             i += 1
           elif arg == 'C':
-            os.chdir(argv[i + 1])
+            os.chdir(d := argv[i + 1])
+            print(f'entered in directory "{d}"')
             i += 2
           else:
             raise Builder.InvalidArgument()
@@ -245,20 +247,19 @@ class Builder:
             need2do = True
             break
     else:
-      need2do ^= True
+      need2do = True
 
     if need2do:
       self.updated = True
       print(file)
-    else:
-      return 0
+      return os.system(cmdline)
 
-    return os.system(cmdline)
+    return 0
 
   def link(self):
     line = f'{self.context.compilers["cpp"]} ' \
       f'{" ".join(self.context.obj_files)} ' \
-      f'{" ".join(self.get_elem("build.flags.link").value)} -pthread -o {self.target}'
+      f'{" ".join(self.get_elem("build.flags.link").value) if not self.f_debug else ""} -pthread -o {self.target}'
 
     print('linking...')
     return os.system(line)
@@ -282,11 +283,15 @@ class Builder:
       os.system(f'mkdir -p {self.context.object_outdir}/{sub}')
 
     # == Compile ==
-    errlist = [ ]
+    def comp(x):
+      if self.errflag == True:
+        return
 
-    def comp(src):
-      if res := self.compile(src) != 0:
-        errlist.append(src)
+      res = self.compile(x)
+
+      if res != 0:
+        self.errflag = True
+    # ====
 
     if self.context.fastmode:
       with ThreadPoolExecutor() as executor:
@@ -295,7 +300,8 @@ class Builder:
       for src in self.context.src_files:
         comp(src)
 
-    if errlist != [ ]:
+    if self.errflag:
+      print('failed to compile')
       return 1
 
     # == Link ==
@@ -333,9 +339,7 @@ class Builder:
 
         self.ndlist = [repl(nd, '-O', '-O0 -g') for nd in self.ndlist]
 
-      self.execute()
-
-      return 0
+      return self.execute()
     except Parser.ParseError as e:
       print('parse error!')
     except Builder.ElementNotFound as e:
