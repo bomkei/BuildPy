@@ -16,7 +16,7 @@ def main() -> int:
     print(f'cannot open file "{e.filename}"')
   except Exception as e:
     print(f'unhandled exception have been occurred:\n\nmsg: {e.args}')
-  
+
   return -1
 
 # ------

@@ -105,6 +105,8 @@ class Builder:
           with open(self.script_path, mode='r') as fs:
             self.script = ''.join(fs.readlines())
 
+          self.script = self.script.strip()
+
           i += 1
         else:
           print('script file already specified')
@@ -266,7 +268,7 @@ class Builder:
 
   def execute(self) -> int:
     self.context = self.init_context()
-    
+
     self.context.obj_files = [self.to_output_path(x) for x in self.context.src_files]
 
     if self.f_clean or self.f_re:

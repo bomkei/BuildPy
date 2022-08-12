@@ -130,8 +130,6 @@ class Parser:
               raise Parser.ParseError()
           else:
             x.value.append(item)
-        
-        #x.value = ' '.join(x.value)
       elif self.eat('{'):
         x.kind = Node.Kind.Properties
         x.value = [ ]

@@ -6,6 +6,7 @@ __pycache__/
 # Test
 test/build/
 test/test
+test.sh
 
 # C extensions
 *.so
